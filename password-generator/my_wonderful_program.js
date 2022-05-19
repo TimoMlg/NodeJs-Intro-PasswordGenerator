@@ -6,31 +6,43 @@ import color from 'ansi-colors';
 const myArgs = process.argv;
 const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
 
-function createPass() { 
+function createPassword() { 
+    var password;
     var length = 10;
     //set length of password
     myArgs.forEach(arg => {
         if (arg.match('^[0-9]*$')) {
             length = parseInt(arg);
+            if (arg >= 6) {
+                    password = generator.generate({
+                    length: length,
+                    numbers: true,
+                    lowercase: true,
+                    uppercase: true,
+                    symbols: true,
+                    strict: true
+                });
+            } else {
+                console.log("Veuillez choisir un mot de passe d'au moins 6 caracteres");
+            }
         }
        });
 
-    var password = generator.generate({
-        length: length,
-        numbers: true,
-        lowercase: true,
-        uppercase: true,
-        symbols: true
-
-    });
    //optional -c arg for clipboard
    myArgs.forEach(arg => {
     if (arg == "-c") {
-        clipboard.writeSync(password);
+        if (password != undefined) {
+            clipboard.writeSync(password);
+        }
     } 
    })
+   
+   return password;
+}
 
-   // Itération sur le password
+function displayPassword(password) {
+    if (password != undefined) {
+        // Itération sur le password
    for (let index = 0; index < password.length; index++) {
     // Tester la Présence de chiffre et print en rouge
     if (password[index].match('^[0-9]*$')) {
@@ -43,9 +55,10 @@ function createPass() {
         process.stdout.write(password[index]);
     }
    }
-   process.stdout.write("\n");
-   
-   return password;
+        process.stdout.write("\n");
+    }
+    
 }
 
-createPass();
+const pass = createPassword();
+displayPassword(pass);
