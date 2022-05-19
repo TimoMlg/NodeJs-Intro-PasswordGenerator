@@ -4,7 +4,7 @@ import generator from 'generate-password';
 import color from 'ansi-colors';
 
 const myArgs = process.argv;
-//console.log("Node rocks!");
+const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
 
 function createPass() { 
     var length = 10;
@@ -30,17 +30,22 @@ function createPass() {
     } 
    })
 
-   const splittedPass = password.split('');
-   splittedPass.forEach(char => {
-       if (char.match(/[`!@#$%^&*()_+\-=\[\]{};':\\|,.<>\/?~]/)) {
-            console.log(color.red(char));
-            const index = password.indexOf(char);
-            splittedPass.splice(index, 0, char);
-       }
-   });
+   // Itération sur le password
+   for (let index = 0; index < password.length; index++) {
+    // Tester la Présence de chiffre et print en rouge
+    if (password[index].match('^[0-9]*$')) {
+        process.stdout.write(color.red(password[index]));
+        // Tester la présence de caracteres spéciaux et print en Bleu
+    } else if (password[index].match(specialChars)) {
+        process.stdout.write(color.blue(password[index]));
+        //Print les caracteres normaux
+    } else {
+        process.stdout.write(password[index]);
+    }
+   }
+   process.stdout.write("\n");
    
    return password;
 }
 
-const password = createPass();
-console.log(password);
+createPass();
